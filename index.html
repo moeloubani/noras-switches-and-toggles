@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Nora's Switches & Toggles</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            overflow-x: hidden;
+            padding: 20px;
+            transition: background 0.5s ease;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .title {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            background: linear-gradient(45deg, #9b59b6, #8e44ad, #bb6bd9, #9b59b6);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease infinite;
+            text-shadow: 0 0 30px rgba(155, 89, 182, 0.5);
+            filter: drop-shadow(0 0 10px rgba(155, 89, 182, 0.3));
+        }
+
+        .subtitle {
+            color: #e8daef;
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .toggles-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .toggle-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .toggle-card:active {
+            transform: scale(0.98);
+        }
+
+        .toggle-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .toggle-icon {
+            font-size: 2.5rem;
+            filter: drop-shadow(0 0 10px currentColor);
+        }
+
+        .toggle-label {
+            font-size: 1.3rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Toggle Switch Styles */
+        .toggle-switch {
+            position: relative;
+            width: 80px;
+            height: 44px;
+            cursor: pointer;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #4a4a6a;
+            border-radius: 44px;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 36px;
+            width: 36px;
+            left: 4px;
+            bottom: 4px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        input:checked + .slider {
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3), 0 0 20px var(--glow-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(36px);
+        }
+
+        /* Individual toggle colors */
+        .toggle-stars input:checked + .slider { background: #f39c12; --glow-color: #f39c12; }
+        .toggle-bubbles input:checked + .slider { background: #3498db; --glow-color: #3498db; }
+        .toggle-confetti input:checked + .slider { background: #e74c3c; --glow-color: #e74c3c; }
+        .toggle-rainbow input:checked + .slider { background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #1dd1a1); --glow-color: #1dd1a1; }
+        .toggle-music input:checked + .slider { background: #1abc9c; --glow-color: #1abc9c; }
+        .toggle-hearts input:checked + .slider { background: #ff6b81; --glow-color: #ff6b81; }
+        .toggle-bounce input:checked + .slider { background: #ff9f43; --glow-color: #ff9f43; }
+        .toggle-sparkle input:checked + .slider { background: #a29bfe; --glow-color: #a29bfe; }
+
+        /* Effects Container */
+        .effects-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        /* Star effect */
+        .star {
+            position: absolute;
+            font-size: 2rem;
+            animation: starFloat 3s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes starFloat {
+            0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+            100% { transform: translateY(-300px) rotate(360deg) scale(0); opacity: 0; }
+        }
+
+        /* Bubble effect */
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), rgba(100, 200, 255, 0.4));
+            animation: bubbleFloat 4s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes bubbleFloat {
+            0% { transform: translateY(0) scale(1); opacity: 0.8; }
+            100% { transform: translateY(-400px) scale(1.5); opacity: 0; }
+        }
+
+        /* Confetti effect */
+        .confetti {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            animation: confettiFall 3s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Heart effect */
+        .heart {
+            position: absolute;
+            font-size: 2rem;
+            animation: heartFloat 2s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes heartFloat {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            50% { transform: translateY(-100px) scale(1.5); opacity: 1; }
+            100% { transform: translateY(-200px) scale(0.5); opacity: 0; }
+        }
+
+        /* Sparkle effect */
+        .sparkle {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: sparkleAnim 1.5s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes sparkleAnim {
+            0% { transform: scale(0) rotate(0deg); opacity: 1; }
+            50% { transform: scale(1.5) rotate(180deg); opacity: 1; }
+            100% { transform: scale(0) rotate(360deg); opacity: 0; }
+        }
+
+        /* Bounce effect on cards */
+        .bouncing {
+            animation: bounce 0.5s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* Rainbow background */
+        .rainbow-bg {
+            background: linear-gradient(135deg,
+                #ff6b6b 0%,
+                #feca57 20%,
+                #48dbfb 40%,
+                #1dd1a1 60%,
+                #a29bfe 80%,
+                #ff6b81 100%) !important;
+            animation: rainbowShift 2s ease infinite;
+            background-size: 400% 400%;
+        }
+
+        @keyframes rainbowShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Nora's special corner */
+        .nora-corner {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            padding: 15px 25px;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.2rem;
+            box-shadow: 0 0 30px rgba(155, 89, 182, 0.5);
+            animation: pulse 2s ease infinite;
+            z-index: 100;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 30px rgba(155, 89, 182, 0.5); }
+            50% { transform: scale(1.05); box-shadow: 0 0 50px rgba(155, 89, 182, 0.8); }
+        }
+
+        /* Music notes floating */
+        .music-note {
+            position: absolute;
+            font-size: 2rem;
+            animation: noteFloat 2s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes noteFloat {
+            0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-200px) translateX(50px) rotate(30deg); opacity: 0; }
+        }
+
+        /* Reset button */
+        .reset-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #636e72, #2d3436);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.1rem;
+            font-family: inherit;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+            z-index: 100;
+        }
+
+        .reset-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Counter display */
+        .counter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            padding: 10px 20px;
+            border-radius: 30px;
+            color: white;
+            font-size: 1.2rem;
+            box-shadow: 0 0 20px rgba(155, 89, 182, 0.4);
+            z-index: 100;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .toggles-container {
+                padding: 10px;
+            }
+
+            .toggle-card {
+                padding: 20px;
+            }
+
+            .toggle-label {
+                font-size: 1.1rem;
+            }
+
+            .nora-corner {
+                font-size: 1rem;
+                padding: 12px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="title">Nora's Switches & Toggles</h1>
+        <p class="subtitle">Tap the switches to see magic happen!</p>
+    </div>
+
+    <div class="counter">Toggles: <span id="toggleCount">0</span></div>
+
+    <div class="toggles-container">
+        <div class="toggle-card" data-effect="stars">
+            <div class="toggle-info">
+                <span class="toggle-icon">⭐</span>
+                <span class="toggle-label">Stars!</span>
+            </div>
+            <label class="toggle-switch toggle-stars">
+                <input type="checkbox" data-effect="stars">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="toggle-card" data-effect="bubbles">
+            <div class="toggle-info">
+                <span class="toggle-icon">🫧</span>
+                <span class="toggle-label">Bubbles!</span>
+            </div>
+            <label class="toggle-switch toggle-bubbles">
+                <input type="checkbox" data-effect="bubbles">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="toggle-card" data-effect="confetti">
+            <div class="toggle-info">
+                <span class="toggle-icon">🎉</span>
+                <span class="toggle-label">Confetti!</span>
+            </div>
+            <label class="toggle-switch toggle-confetti">
+                <input type="checkbox" data-effect="confetti">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="toggle-card" data-effect="rainbow">
+            <div class="toggle-info">
+                <span class="toggle-icon">🌈</span>
+                <span class="toggle-label">Rainbow!</span>
+            </div>
+            <label class="toggle-switch toggle-rainbow">
+                <input type="checkbox" data-effect="rainbow">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="toggle-card" data-effect="music">
+            <div class="toggle-info">
+                <span class="toggle-icon">🎵</span>
+                <span class="toggle-label">Music!</span>
+            </div>
+            <label class="toggle-switch toggle-music">
+                <input type="checkbox" data-effect="music">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="toggle-card" data-effect="hearts">
+            <div class="toggle-info">
+                <span class="toggle-icon">💕</span>
+                <span class="toggle-label">Hearts!</span>
+            </div>
+            <label class="toggle-switch toggle-hearts">
+                <input type="checkbox" data-effect="hearts">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="toggle-card" data-effect="bounce">
+            <div class="toggle-info">
+                <span class="toggle-icon">🏀</span>
+                <span class="toggle-label">Bounce!</span>
+            </div>
+            <label class="toggle-switch toggle-bounce">
+                <input type="checkbox" data-effect="bounce">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="toggle-card" data-effect="sparkle">
+            <div class="toggle-info">
+                <span class="toggle-icon">✨</span>
+                <span class="toggle-label">Sparkle!</span>
+            </div>
+            <label class="toggle-switch toggle-sparkle">
+                <input type="checkbox" data-effect="sparkle">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <div class="effects-container" id="effectsContainer"></div>
+
+    <button class="reset-btn" id="resetBtn">Reset All</button>
+
+    <div class="nora-corner">
+        💜 Made for Nora 💜
+    </div>
+
+    <script>
+        // Audio context for sounds
+        let audioContext;
+        const effectIntervals = {};
+        let toggleCount = 0;
+
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        // Play a fun tone
+        function playTone(frequency, duration = 0.3, type = 'sine') {
+            initAudio();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.frequency.value = frequency;
+            oscillator.type = type;
+
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + duration);
+        }
+
+        // Play happy melody
+        function playMelody() {
+            const notes = [523, 587, 659, 698, 784, 880, 988, 1047];
+            notes.forEach((freq, i) => {
+                setTimeout(() => playTone(freq, 0.2), i * 150);
+            });
+        }
+
+        // Play toggle sound
+        function playToggleSound(on) {
+            if (on) {
+                playTone(800, 0.1);
+                setTimeout(() => playTone(1200, 0.15), 100);
+            } else {
+                playTone(600, 0.1);
+                setTimeout(() => playTone(400, 0.15), 100);
+            }
+        }
+
+        // Create effects
+        const container = document.getElementById('effectsContainer');
+
+        function createStar() {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.textContent = ['⭐', '🌟', '✨', '💫'][Math.floor(Math.random() * 4)];
+            star.style.left = Math.random() * window.innerWidth + 'px';
+            star.style.top = Math.random() * window.innerHeight + 'px';
+            star.style.color = `hsl(${Math.random() * 60 + 30}, 100%, 50%)`;
+            container.appendChild(star);
+            playTone(600 + Math.random() * 400, 0.1);
+            setTimeout(() => star.remove(), 3000);
+        }
+
+        function createBubble() {
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            const size = 30 + Math.random() * 50;
+            bubble.style.width = size + 'px';
+            bubble.style.height = size + 'px';
+            bubble.style.left = Math.random() * window.innerWidth + 'px';
+            bubble.style.bottom = '0px';
+            container.appendChild(bubble);
+            playTone(300 + Math.random() * 200, 0.15, 'sine');
+            setTimeout(() => bubble.remove(), 4000);
+        }
+
+        function createConfetti() {
+            const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#1dd1a1', '#ff9ff3', '#54a0ff'];
+            for (let i = 0; i < 5; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * window.innerWidth + 'px';
+                confetti.style.top = '-20px';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                container.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 3000);
+            }
+            playTone(1000 + Math.random() * 500, 0.1, 'square');
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.textContent = ['💕', '💖', '💗', '💝', '❤️'][Math.floor(Math.random() * 5)];
+            heart.style.left = Math.random() * window.innerWidth + 'px';
+            heart.style.top = Math.random() * window.innerHeight + 'px';
+            container.appendChild(heart);
+            playTone(700, 0.15);
+            setTimeout(() => playTone(900, 0.2), 150);
+            setTimeout(() => heart.remove(), 2000);
+        }
+
+        function createSparkle() {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.textContent = ['✨', '⭐', '💎', '🔮'][Math.floor(Math.random() * 4)];
+            sparkle.style.left = Math.random() * window.innerWidth + 'px';
+            sparkle.style.top = Math.random() * window.innerHeight + 'px';
+            container.appendChild(sparkle);
+            playTone(1200 + Math.random() * 400, 0.1, 'triangle');
+            setTimeout(() => sparkle.remove(), 1500);
+        }
+
+        function createMusicNote() {
+            const note = document.createElement('div');
+            note.className = 'music-note';
+            note.textContent = ['🎵', '🎶', '🎼', '🎹'][Math.floor(Math.random() * 4)];
+            note.style.left = Math.random() * window.innerWidth + 'px';
+            note.style.top = window.innerHeight / 2 + 'px';
+            container.appendChild(note);
+            setTimeout(() => note.remove(), 2000);
+        }
+
+        // Effect handlers
+        const effects = {
+            stars: {
+                start: () => {
+                    effectIntervals.stars = setInterval(createStar, 200);
+                },
+                stop: () => clearInterval(effectIntervals.stars)
+            },
+            bubbles: {
+                start: () => {
+                    effectIntervals.bubbles = setInterval(createBubble, 300);
+                },
+                stop: () => clearInterval(effectIntervals.bubbles)
+            },
+            confetti: {
+                start: () => {
+                    effectIntervals.confetti = setInterval(createConfetti, 150);
+                },
+                stop: () => clearInterval(effectIntervals.confetti)
+            },
+            rainbow: {
+                start: () => {
+                    document.body.classList.add('rainbow-bg');
+                    playMelody();
+                },
+                stop: () => document.body.classList.remove('rainbow-bg')
+            },
+            music: {
+                start: () => {
+                    playMelody();
+                    effectIntervals.music = setInterval(() => {
+                        createMusicNote();
+                        playTone([523, 587, 659, 698, 784][Math.floor(Math.random() * 5)], 0.2);
+                    }, 400);
+                },
+                stop: () => clearInterval(effectIntervals.music)
+            },
+            hearts: {
+                start: () => {
+                    effectIntervals.hearts = setInterval(createHeart, 250);
+                },
+                stop: () => clearInterval(effectIntervals.hearts)
+            },
+            bounce: {
+                start: () => {
+                    document.querySelectorAll('.toggle-card').forEach(card => {
+                        card.classList.add('bouncing');
+                    });
+                    effectIntervals.bounce = setInterval(() => {
+                        playTone(300, 0.1, 'triangle');
+                    }, 500);
+                },
+                stop: () => {
+                    document.querySelectorAll('.toggle-card').forEach(card => {
+                        card.classList.remove('bouncing');
+                    });
+                    clearInterval(effectIntervals.bounce);
+                }
+            },
+            sparkle: {
+                start: () => {
+                    effectIntervals.sparkle = setInterval(createSparkle, 150);
+                },
+                stop: () => clearInterval(effectIntervals.sparkle)
+            }
+        };
+
+        // Event listeners
+        document.querySelectorAll('input[type="checkbox"]').forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                const effect = this.dataset.effect;
+                playToggleSound(this.checked);
+
+                if (this.checked) {
+                    toggleCount++;
+                    effects[effect].start();
+                } else {
+                    effects[effect].stop();
+                }
+
+                document.getElementById('toggleCount').textContent = toggleCount;
+            });
+
+            // Also make the whole card clickable
+            const card = toggle.closest('.toggle-card');
+            card.addEventListener('click', function(e) {
+                if (e.target !== toggle && !e.target.closest('.toggle-switch')) {
+                    toggle.checked = !toggle.checked;
+                    toggle.dispatchEvent(new Event('change'));
+                }
+            });
+        });
+
+        // Reset button
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            document.querySelectorAll('input[type="checkbox"]').forEach(toggle => {
+                if (toggle.checked) {
+                    toggle.checked = false;
+                    const effect = toggle.dataset.effect;
+                    effects[effect].stop();
+                }
+            });
+            toggleCount = 0;
+            document.getElementById('toggleCount').textContent = 0;
+            playTone(400, 0.2);
+            setTimeout(() => playTone(300, 0.2), 200);
+        });
+
+        // Touch feedback
+        document.querySelectorAll('.toggle-card').forEach(card => {
+            card.addEventListener('touchstart', function() {
+                this.style.transform = 'scale(0.98)';
+            });
+            card.addEventListener('touchend', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+
+        // Prevent zooming on double-tap
+        document.addEventListener('dblclick', function(e) {
+            e.preventDefault();
+        });
+    </script>
+</body>
+</html>
