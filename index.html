@@ -155,6 +155,9 @@
         .toggle-snowflakes input:checked + .slider { background: #81ecec; --glow-color: #81ecec; }
         .toggle-unicorns input:checked + .slider { background: linear-gradient(90deg, #ff9ff3, #a29bfe, #74b9ff); --glow-color: #ff9ff3; }
         .toggle-balloons input:checked + .slider { background: #fd79a8; --glow-color: #fd79a8; }
+        .toggle-spin input:checked + .slider { background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb); --glow-color: #48dbfb; }
+        .toggle-cows input:checked + .slider { background: #a29bfe; --glow-color: #a29bfe; }
+        .toggle-cookies input:checked + .slider { background: #e17055; --glow-color: #e17055; }
 
         /* Effects Container */
         .effects-container {
@@ -360,7 +363,7 @@
         /* Snowflake effect */
         .snowflake {
             position: absolute;
-            font-size: 1.5rem;
+            font-size: 2.5rem;
             animation: snowFall 4s linear forwards;
             pointer-events: none;
         }
@@ -389,7 +392,7 @@
         /* Balloon effect */
         .balloon {
             position: absolute;
-            font-size: 2.5rem;
+            font-size: 3.5rem;
             animation: balloonFloat 5s ease-out forwards;
             pointer-events: none;
         }
@@ -400,6 +403,55 @@
             50% { transform: translateY(-50vh) translateX(-10px) rotate(-5deg); opacity: 1; }
             75% { transform: translateY(-75vh) translateX(15px) rotate(3deg); opacity: 1; }
             100% { transform: translateY(-100vh) translateX(0) rotate(0deg); opacity: 0; }
+        }
+
+        /* Spin effect on cards */
+        .spinning {
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Cow effect */
+        .cow {
+            position: absolute;
+            font-size: 3rem;
+            animation: cowWalk 5s linear forwards;
+            pointer-events: none;
+        }
+
+        @keyframes cowWalk {
+            0% { transform: translateX(0) scaleX(1); opacity: 1; }
+            100% { transform: translateX(100vw) scaleX(1); opacity: 1; }
+        }
+
+        .cow.walk-left {
+            animation: cowWalkLeft 5s linear forwards;
+        }
+
+        @keyframes cowWalkLeft {
+            0% { transform: translateX(0) scaleX(-1); opacity: 1; }
+            100% { transform: translateX(-100vw) scaleX(-1); opacity: 1; }
+        }
+
+        /* Cookie effect */
+        .cookie {
+            position: absolute;
+            font-size: 2.5rem;
+            animation: cookieBounce 3s ease-in-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes cookieBounce {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            20% { transform: translateY(-100px) rotate(72deg); opacity: 1; }
+            40% { transform: translateY(0) rotate(144deg); opacity: 1; }
+            60% { transform: translateY(-60px) rotate(216deg); opacity: 1; }
+            80% { transform: translateY(0) rotate(288deg); opacity: 1; }
+            100% { transform: translateY(-30px) rotate(360deg); opacity: 0; }
         }
 
         /* Reset button */
@@ -618,6 +670,39 @@
             </div>
             <label class="toggle-switch toggle-balloons">
                 <input type="checkbox" data-effect="balloons">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="toggle-card" data-effect="spin">
+            <div class="toggle-info">
+                <span class="toggle-icon">🌀</span>
+                <span class="toggle-label">Spin!</span>
+            </div>
+            <label class="toggle-switch toggle-spin">
+                <input type="checkbox" data-effect="spin">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="toggle-card" data-effect="cows">
+            <div class="toggle-info">
+                <span class="toggle-icon">🐄</span>
+                <span class="toggle-label">Cows!</span>
+            </div>
+            <label class="toggle-switch toggle-cows">
+                <input type="checkbox" data-effect="cows">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="toggle-card" data-effect="cookies">
+            <div class="toggle-info">
+                <span class="toggle-icon">🍪</span>
+                <span class="toggle-label">Cookies!</span>
+            </div>
+            <label class="toggle-switch toggle-cookies">
+                <input type="checkbox" data-effect="cookies">
                 <span class="slider"></span>
             </label>
         </div>
@@ -844,6 +929,40 @@
             setTimeout(() => balloon.remove(), 5000);
         }
 
+        function createCow() {
+            const cow = document.createElement('div');
+            cow.className = 'cow';
+            cow.textContent = '🐄';
+            const walkLeft = Math.random() > 0.5;
+            if (walkLeft) {
+                cow.classList.add('walk-left');
+                cow.style.left = (window.innerWidth - 50) + 'px';
+            } else {
+                cow.style.left = '0px';
+            }
+            cow.style.top = (window.innerHeight * 0.6 + Math.random() * window.innerHeight * 0.3) + 'px';
+            container.appendChild(cow);
+            // Moo sound - low frequency wobble
+            playTone(150, 0.4, 'sawtooth');
+            setTimeout(() => playTone(120, 0.5, 'sawtooth'), 200);
+            setTimeout(() => playTone(100, 0.3, 'sawtooth'), 500);
+            setTimeout(() => cow.remove(), 5000);
+        }
+
+        function createCookie() {
+            const cookie = document.createElement('div');
+            cookie.className = 'cookie';
+            cookie.textContent = ['🍪', '🍪', '🥠', '🍩'][Math.floor(Math.random() * 4)];
+            cookie.style.left = Math.random() * window.innerWidth + 'px';
+            cookie.style.top = (window.innerHeight * 0.3 + Math.random() * window.innerHeight * 0.4) + 'px';
+            container.appendChild(cookie);
+            // Crunchy cookie sound
+            playTone(800, 0.08, 'square');
+            setTimeout(() => playTone(1000, 0.06, 'square'), 50);
+            setTimeout(() => playTone(600, 0.08, 'square'), 100);
+            setTimeout(() => cookie.remove(), 3000);
+        }
+
         // Effect handlers
         const effects = {
             stars: {
@@ -944,6 +1063,34 @@
                     effectIntervals.balloons = setInterval(createBalloon, 350);
                 },
                 stop: () => clearInterval(effectIntervals.balloons)
+            },
+            spin: {
+                start: () => {
+                    document.querySelectorAll('.toggle-card').forEach(card => {
+                        card.classList.add('spinning');
+                    });
+                    effectIntervals.spin = setInterval(() => {
+                        playTone(500 + Math.random() * 300, 0.1, 'sine');
+                    }, 500);
+                },
+                stop: () => {
+                    document.querySelectorAll('.toggle-card').forEach(card => {
+                        card.classList.remove('spinning');
+                    });
+                    clearInterval(effectIntervals.spin);
+                }
+            },
+            cows: {
+                start: () => {
+                    effectIntervals.cows = setInterval(createCow, 1500);
+                },
+                stop: () => clearInterval(effectIntervals.cows)
+            },
+            cookies: {
+                start: () => {
+                    effectIntervals.cookies = setInterval(createCookie, 300);
+                },
+                stop: () => clearInterval(effectIntervals.cookies)
             }
         };
 
