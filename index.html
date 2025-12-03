@@ -550,18 +550,18 @@
         }
 
         .cake {
-            font-size: 8rem;
+            font-size: 14rem;
             filter: drop-shadow(0 10px 30px rgba(0,0,0,0.3));
             transition: filter 0.3s;
         }
 
         .candles-container {
             position: absolute;
-            top: -60px;
+            top: -120px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 30px;
+            gap: 50px;
         }
 
         .candle {
@@ -570,31 +570,40 @@
             align-items: center;
             cursor: pointer;
             transition: transform 0.2s;
+            padding: 20px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+            pointer-events: auto;
         }
 
         .candle:hover {
-            transform: scale(1.1);
+            transform: scale(1.15);
+            background: rgba(255,255,255,0.2);
+        }
+
+        .candle:active {
+            transform: scale(0.95);
         }
 
         .candle-stick {
-            width: 12px;
-            height: 40px;
-            border-radius: 3px;
+            width: 20px;
+            height: 70px;
+            border-radius: 5px;
             background: #feca57;
             position: relative;
         }
 
         .flame {
             position: absolute;
-            top: -25px;
+            top: -45px;
             left: 50%;
             transform: translateX(-50%);
-            width: 16px;
-            height: 25px;
+            width: 28px;
+            height: 45px;
             background: linear-gradient(to top, #ff6b6b, #feca57, #fff);
             border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
             animation: flicker 0.3s ease-in-out infinite alternate;
-            box-shadow: 0 0 20px #feca57, 0 0 40px #ff6b6b;
+            box-shadow: 0 0 30px #feca57, 0 0 60px #ff6b6b;
         }
 
         .flame.out {
@@ -603,10 +612,10 @@
 
         .smoke {
             position: absolute;
-            top: -30px;
+            top: -50px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 1.5rem;
+            font-size: 2.5rem;
             opacity: 0;
             animation: smokeRise 1s ease-out forwards;
         }
@@ -735,11 +744,27 @@
             }
 
             .cake {
-                font-size: 6rem;
+                font-size: 10rem;
             }
 
             .candles-container {
-                gap: 20px;
+                gap: 25px;
+                top: -100px;
+            }
+
+            .candle {
+                padding: 15px;
+            }
+
+            .candle-stick {
+                width: 16px;
+                height: 55px;
+            }
+
+            .flame {
+                width: 22px;
+                height: 35px;
+                top: -35px;
             }
 
             .birthday-title {
