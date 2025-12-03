@@ -149,6 +149,7 @@
         .toggle-hearts input:checked + .slider { background: #ff6b81; --glow-color: #ff6b81; }
         .toggle-bounce input:checked + .slider { background: #ff9f43; --glow-color: #ff9f43; }
         .toggle-sparkle input:checked + .slider { background: #a29bfe; --glow-color: #a29bfe; }
+        .toggle-birds input:checked + .slider { background: #74b9ff; --glow-color: #74b9ff; }
 
         /* Effects Container */
         .effects-container {
@@ -290,6 +291,34 @@
         @keyframes noteFloat {
             0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 1; }
             100% { transform: translateY(-200px) translateX(50px) rotate(30deg); opacity: 0; }
+        }
+
+        /* Bird effect */
+        .bird {
+            position: absolute;
+            font-size: 2rem;
+            animation: birdFly 4s ease-in-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes birdFly {
+            0% { transform: translateX(0) translateY(0) scaleX(1); opacity: 1; }
+            25% { transform: translateX(25vw) translateY(-30px) scaleX(1); opacity: 1; }
+            50% { transform: translateX(50vw) translateY(20px) scaleX(1); opacity: 1; }
+            75% { transform: translateX(75vw) translateY(-20px) scaleX(1); opacity: 1; }
+            100% { transform: translateX(100vw) translateY(0) scaleX(1); opacity: 0; }
+        }
+
+        .bird.fly-left {
+            animation: birdFlyLeft 4s ease-in-out forwards;
+        }
+
+        @keyframes birdFlyLeft {
+            0% { transform: translateX(0) translateY(0) scaleX(-1); opacity: 1; }
+            25% { transform: translateX(-25vw) translateY(-30px) scaleX(-1); opacity: 1; }
+            50% { transform: translateX(-50vw) translateY(20px) scaleX(-1); opacity: 1; }
+            75% { transform: translateX(-75vw) translateY(-20px) scaleX(-1); opacity: 1; }
+            100% { transform: translateX(-100vw) translateY(0) scaleX(-1); opacity: 0; }
         }
 
         /* Reset button */
@@ -445,6 +474,17 @@
                 <span class="slider"></span>
             </label>
         </div>
+
+        <div class="toggle-card" data-effect="birds">
+            <div class="toggle-info">
+                <span class="toggle-icon">🐦</span>
+                <span class="toggle-label">Birds!</span>
+            </div>
+            <label class="toggle-switch toggle-birds">
+                <input type="checkbox" data-effect="birds">
+                <span class="slider"></span>
+            </label>
+        </div>
     </div>
 
     <div class="effects-container" id="effectsContainer"></div>
@@ -581,6 +621,25 @@
             setTimeout(() => note.remove(), 2000);
         }
 
+        function createBird() {
+            const bird = document.createElement('div');
+            bird.className = 'bird';
+            bird.textContent = ['🐦', '🕊️', '🦅', '🦆', '🐤'][Math.floor(Math.random() * 5)];
+            const flyLeft = Math.random() > 0.5;
+            if (flyLeft) {
+                bird.classList.add('fly-left');
+                bird.style.left = (window.innerWidth - 50) + 'px';
+            } else {
+                bird.style.left = '0px';
+            }
+            bird.style.top = (Math.random() * (window.innerHeight * 0.6) + 50) + 'px';
+            container.appendChild(bird);
+            // Chirp sound
+            playTone(1200 + Math.random() * 600, 0.1, 'sine');
+            setTimeout(() => playTone(1400 + Math.random() * 400, 0.08, 'sine'), 100);
+            setTimeout(() => bird.remove(), 4000);
+        }
+
         // Effect handlers
         const effects = {
             stars: {
@@ -645,6 +704,12 @@
                     effectIntervals.sparkle = setInterval(createSparkle, 150);
                 },
                 stop: () => clearInterval(effectIntervals.sparkle)
+            },
+            birds: {
+                start: () => {
+                    effectIntervals.birds = setInterval(createBird, 500);
+                },
+                stop: () => clearInterval(effectIntervals.birds)
             }
         };
 
