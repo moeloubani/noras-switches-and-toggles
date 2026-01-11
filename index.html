@@ -557,11 +557,11 @@
 
         .candles-container {
             position: absolute;
-            top: -120px;
+            top: -160px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 50px;
+            gap: 80px;
         }
 
         .candle {
@@ -570,15 +570,16 @@
             align-items: center;
             cursor: pointer;
             transition: transform 0.2s;
-            padding: 20px;
-            border-radius: 10px;
-            background: rgba(255,255,255,0.1);
+            padding: 25px 30px;
+            border-radius: 15px;
+            background: rgba(255,255,255,0.15);
             pointer-events: auto;
+            min-width: 80px;
         }
 
         .candle:hover {
             transform: scale(1.15);
-            background: rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.25);
         }
 
         .candle:active {
@@ -586,24 +587,24 @@
         }
 
         .candle-stick {
-            width: 20px;
-            height: 70px;
-            border-radius: 5px;
+            width: 25px;
+            height: 90px;
+            border-radius: 6px;
             background: #feca57;
             position: relative;
         }
 
         .flame {
             position: absolute;
-            top: -45px;
+            top: -55px;
             left: 50%;
             transform: translateX(-50%);
-            width: 28px;
-            height: 45px;
+            width: 35px;
+            height: 55px;
             background: linear-gradient(to top, #ff6b6b, #feca57, #fff);
             border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
             animation: flicker 0.3s ease-in-out infinite alternate;
-            box-shadow: 0 0 30px #feca57, 0 0 60px #ff6b6b;
+            box-shadow: 0 0 40px #feca57, 0 0 80px #ff6b6b;
         }
 
         .flame.out {
@@ -748,23 +749,24 @@
             }
 
             .candles-container {
-                gap: 25px;
-                top: -100px;
+                gap: 40px;
+                top: -130px;
             }
 
             .candle {
-                padding: 15px;
+                padding: 18px 22px;
+                min-width: 65px;
             }
 
             .candle-stick {
-                width: 16px;
-                height: 55px;
+                width: 20px;
+                height: 70px;
             }
 
             .flame {
-                width: 22px;
-                height: 35px;
-                top: -35px;
+                width: 28px;
+                height: 44px;
+                top: -45px;
             }
 
             .birthday-title {
