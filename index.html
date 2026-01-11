@@ -534,6 +534,17 @@
         .birthday-content {
             text-align: center;
             padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .birthday-main {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
         }
 
         .birthday-title {
@@ -633,26 +644,29 @@
 
         .color-pickers {
             display: flex;
-            gap: 30px;
-            justify-content: center;
-            margin: 20px 0;
+            flex-direction: column;
+            gap: 25px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
         }
 
         .color-picker-group {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .color-picker-label {
             color: white;
-            font-size: 1rem;
+            font-size: 1.1rem;
+            font-weight: bold;
         }
 
         .color-picker-group input[type="color"] {
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             border: 3px solid white;
             border-radius: 50%;
             cursor: pointer;
@@ -983,36 +997,38 @@
         <div class="birthday-content">
             <h2 class="birthday-title">🎉 Happy Birthday Nora! 🎉</h2>
 
-            <div class="color-pickers">
-                <div class="color-picker-group">
-                    <label class="color-picker-label">Cake Color</label>
-                    <input type="color" id="cakeColor" value="#ff9ff3">
+            <div class="birthday-main">
+                <div class="color-pickers">
+                    <div class="color-picker-group">
+                        <label class="color-picker-label">Cake Color</label>
+                        <input type="color" id="cakeColor" value="#ff9ff3">
+                    </div>
+                    <div class="color-picker-group">
+                        <label class="color-picker-label">Candle Color</label>
+                        <input type="color" id="candleColor" value="#feca57">
+                    </div>
                 </div>
-                <div class="color-picker-group">
-                    <label class="color-picker-label">Candle Color</label>
-                    <input type="color" id="candleColor" value="#feca57">
-                </div>
-            </div>
 
-            <div class="cake-container">
-                <div class="candles-container">
-                    <div class="candle" data-candle="1">
-                        <div class="candle-stick">
-                            <div class="flame"></div>
+                <div class="cake-container">
+                    <div class="candles-container">
+                        <div class="candle" data-candle="1">
+                            <div class="candle-stick">
+                                <div class="flame"></div>
+                            </div>
+                        </div>
+                        <div class="candle" data-candle="2">
+                            <div class="candle-stick">
+                                <div class="flame"></div>
+                            </div>
+                        </div>
+                        <div class="candle" data-candle="3">
+                            <div class="candle-stick">
+                                <div class="flame"></div>
+                            </div>
                         </div>
                     </div>
-                    <div class="candle" data-candle="2">
-                        <div class="candle-stick">
-                            <div class="flame"></div>
-                        </div>
-                    </div>
-                    <div class="candle" data-candle="3">
-                        <div class="candle-stick">
-                            <div class="flame"></div>
-                        </div>
-                    </div>
+                    <div class="cake" id="birthdayCake">🎂</div>
                 </div>
-                <div class="cake" id="birthdayCake">🎂</div>
             </div>
 
             <p class="birthday-message" id="birthdayMessage">Tap the candles to blow them out!</p>
