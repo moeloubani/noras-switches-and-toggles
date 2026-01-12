@@ -644,11 +644,12 @@
 
         .color-pickers {
             display: flex;
-            flex-direction: column;
-            gap: 25px;
-            padding: 20px;
+            flex-direction: row;
+            gap: 40px;
+            padding: 20px 30px;
             background: rgba(255,255,255,0.1);
             border-radius: 20px;
+            margin-top: 20px;
         }
 
         .color-picker-group {
@@ -781,10 +782,6 @@
                 width: 30px;
                 height: 48px;
                 top: -50px;
-            }
-
-            .birthday-main {
-                flex-direction: column;
             }
 
             .birthday-title {
@@ -1002,17 +999,6 @@
             <h2 class="birthday-title">🎉 Happy Birthday Nora! 🎉</h2>
 
             <div class="birthday-main">
-                <div class="color-pickers">
-                    <div class="color-picker-group">
-                        <label class="color-picker-label">Cake Color</label>
-                        <input type="color" id="cakeColor" value="#ff9ff3">
-                    </div>
-                    <div class="color-picker-group">
-                        <label class="color-picker-label">Candle Color</label>
-                        <input type="color" id="candleColor" value="#feca57">
-                    </div>
-                </div>
-
                 <div class="cake-container">
                     <div class="candles-container">
                         <div class="candle" data-candle="1">
@@ -1032,6 +1018,17 @@
                         </div>
                     </div>
                     <div class="cake" id="birthdayCake">🎂</div>
+                </div>
+            </div>
+
+            <div class="color-pickers">
+                <div class="color-picker-group">
+                    <label class="color-picker-label">Cake Color</label>
+                    <input type="color" id="cakeColor" value="#ff9ff3">
+                </div>
+                <div class="color-picker-group">
+                    <label class="color-picker-label">Candle Color</label>
+                    <input type="color" id="candleColor" value="#feca57">
                 </div>
             </div>
 
