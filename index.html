@@ -158,6 +158,9 @@
         .toggle-spin input:checked + .slider { background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb); --glow-color: #48dbfb; }
         .toggle-cows input:checked + .slider { background: #a29bfe; --glow-color: #a29bfe; }
         .toggle-cookies input:checked + .slider { background: #e17055; --glow-color: #e17055; }
+        .toggle-fireworks input:checked + .slider { background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb); --glow-color: #feca57; }
+        .toggle-dinosaurs input:checked + .slider { background: #55a630; --glow-color: #55a630; }
+        .toggle-party input:checked + .slider { background: linear-gradient(90deg, #ff6b81, #feca57, #48dbfb, #1dd1a1); --glow-color: #ff6b81; }
 
         /* Effects Container */
         .effects-container {
@@ -452,6 +455,60 @@
             60% { transform: translateY(-60px) rotate(216deg); opacity: 1; }
             80% { transform: translateY(0) rotate(288deg); opacity: 1; }
             100% { transform: translateY(-30px) rotate(360deg); opacity: 0; }
+        }
+
+        /* Firework effect */
+        .firework {
+            position: absolute;
+            font-size: 3rem;
+            animation: fireworkExplode 1.5s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes fireworkExplode {
+            0% { transform: scale(0.5); opacity: 1; }
+            50% { transform: scale(2); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+
+        .firework-spark {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: sparkFly 1s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes sparkFly {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0.3); opacity: 0; }
+        }
+
+        /* Dinosaur effect */
+        .dinosaur {
+            position: absolute;
+            font-size: 3.5rem;
+            animation: dinoWalk 4s linear forwards;
+            pointer-events: none;
+        }
+
+        @keyframes dinoWalk {
+            0% { transform: translateX(0) scaleX(1); }
+            25% { transform: translateX(25vw) scaleX(1) translateY(-15px); }
+            50% { transform: translateX(50vw) scaleX(1); }
+            75% { transform: translateX(75vw) scaleX(1) translateY(-15px); }
+            100% { transform: translateX(100vw) scaleX(1); }
+        }
+
+        .dinosaur.walk-left {
+            animation: dinoWalkLeft 4s linear forwards;
+        }
+
+        @keyframes dinoWalkLeft {
+            0% { transform: translateX(0) scaleX(-1); }
+            25% { transform: translateX(-25vw) scaleX(-1) translateY(-15px); }
+            50% { transform: translateX(-50vw) scaleX(-1); }
+            75% { transform: translateX(-75vw) scaleX(-1) translateY(-15px); }
+            100% { transform: translateX(-100vw) scaleX(-1); }
         }
 
         /* Reset button */
@@ -985,6 +1042,39 @@
                 <span class="slider"></span>
             </label>
         </div>
+
+        <div class="toggle-card" data-effect="fireworks">
+            <div class="toggle-info">
+                <span class="toggle-icon">🎆</span>
+                <span class="toggle-label">Fireworks!</span>
+            </div>
+            <label class="toggle-switch toggle-fireworks">
+                <input type="checkbox" data-effect="fireworks">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="toggle-card" data-effect="dinosaurs">
+            <div class="toggle-info">
+                <span class="toggle-icon">🦖</span>
+                <span class="toggle-label">Dinosaurs!</span>
+            </div>
+            <label class="toggle-switch toggle-dinosaurs">
+                <input type="checkbox" data-effect="dinosaurs">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="toggle-card" data-effect="party">
+            <div class="toggle-info">
+                <span class="toggle-icon">🥳</span>
+                <span class="toggle-label">Party Mode!</span>
+            </div>
+            <label class="toggle-switch toggle-party">
+                <input type="checkbox" data-effect="party">
+                <span class="slider"></span>
+            </label>
+        </div>
     </div>
 
     <div class="effects-container" id="effectsContainer"></div>
@@ -1046,6 +1136,15 @@
         const effectIntervals = {};
         let toggleCount = 0;
 
+        // Helper function to pick random item from array
+        function randomItem(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        // Cache DOM queries for performance
+        const toggleCards = document.querySelectorAll('.toggle-card');
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
         function initAudio() {
             if (!audioContext) {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -1096,7 +1195,7 @@
         function createStar() {
             const star = document.createElement('div');
             star.className = 'star';
-            star.textContent = ['⭐', '🌟', '✨', '💫'][Math.floor(Math.random() * 4)];
+            star.textContent = randomItem(['⭐', '🌟', '✨', '💫']);
             star.style.left = Math.random() * window.innerWidth + 'px';
             star.style.top = Math.random() * window.innerHeight + 'px';
             star.style.color = `hsl(${Math.random() * 60 + 30}, 100%, 50%)`;
@@ -1136,7 +1235,7 @@
         function createHeart() {
             const heart = document.createElement('div');
             heart.className = 'heart';
-            heart.textContent = ['💕', '💖', '💗', '💝', '❤️'][Math.floor(Math.random() * 5)];
+            heart.textContent = randomItem(['💕', '💖', '💗', '💝', '❤️']);
             heart.style.left = Math.random() * window.innerWidth + 'px';
             heart.style.top = Math.random() * window.innerHeight + 'px';
             container.appendChild(heart);
@@ -1148,7 +1247,7 @@
         function createSparkle() {
             const sparkle = document.createElement('div');
             sparkle.className = 'sparkle';
-            sparkle.textContent = ['✨', '⭐', '💎', '🔮'][Math.floor(Math.random() * 4)];
+            sparkle.textContent = randomItem(['✨', '⭐', '💎', '🔮']);
             sparkle.style.left = Math.random() * window.innerWidth + 'px';
             sparkle.style.top = Math.random() * window.innerHeight + 'px';
             container.appendChild(sparkle);
@@ -1159,7 +1258,7 @@
         function createMusicNote() {
             const note = document.createElement('div');
             note.className = 'music-note';
-            note.textContent = ['🎵', '🎶', '🎼', '🎹'][Math.floor(Math.random() * 4)];
+            note.textContent = randomItem(['🎵', '🎶', '🎼', '🎹']);
             note.style.left = Math.random() * window.innerWidth + 'px';
             note.style.top = window.innerHeight / 2 + 'px';
             container.appendChild(note);
@@ -1169,7 +1268,7 @@
         function createBird() {
             const bird = document.createElement('div');
             bird.className = 'bird';
-            bird.textContent = ['🐦', '🕊️', '🦅', '🦆', '🐤'][Math.floor(Math.random() * 5)];
+            bird.textContent = randomItem(['🐦', '🕊️', '🦅', '🦆', '🐤']);
             const flyLeft = Math.random() > 0.5;
             if (flyLeft) {
                 bird.classList.add('fly-left');
@@ -1179,7 +1278,6 @@
             }
             bird.style.top = (Math.random() * (window.innerHeight * 0.6) + 50) + 'px';
             container.appendChild(bird);
-            // Chirp sound
             playTone(1200 + Math.random() * 600, 0.1, 'sine');
             setTimeout(() => playTone(1400 + Math.random() * 400, 0.08, 'sine'), 100);
             setTimeout(() => bird.remove(), 4000);
@@ -1188,11 +1286,10 @@
         function createButterfly() {
             const butterfly = document.createElement('div');
             butterfly.className = 'butterfly';
-            butterfly.textContent = ['🦋', '🦋', '🦋'][Math.floor(Math.random() * 3)];
+            butterfly.textContent = '🦋';
             butterfly.style.left = Math.random() * (window.innerWidth - 100) + 'px';
             butterfly.style.top = (window.innerHeight * 0.5 + Math.random() * window.innerHeight * 0.4) + 'px';
             container.appendChild(butterfly);
-            // Gentle flutter sound
             playTone(800 + Math.random() * 200, 0.08, 'sine');
             setTimeout(() => butterfly.remove(), 5000);
         }
@@ -1200,11 +1297,10 @@
         function createRocket() {
             const rocket = document.createElement('div');
             rocket.className = 'rocket';
-            rocket.textContent = ['🚀', '🛸', '🚀'][Math.floor(Math.random() * 3)];
+            rocket.textContent = randomItem(['🚀', '🛸']);
             rocket.style.left = Math.random() * window.innerWidth + 'px';
             rocket.style.bottom = '0px';
             container.appendChild(rocket);
-            // Rocket launch sound - rising tone
             playTone(200, 0.3, 'sawtooth');
             setTimeout(() => playTone(400, 0.2, 'sawtooth'), 100);
             setTimeout(() => playTone(600, 0.15, 'sawtooth'), 200);
@@ -1214,12 +1310,11 @@
         function createSnowflake() {
             const snowflake = document.createElement('div');
             snowflake.className = 'snowflake';
-            snowflake.textContent = ['❄️', '❅', '❆', '✻', '✼'][Math.floor(Math.random() * 5)];
+            snowflake.textContent = randomItem(['❄️', '❅', '❆', '✻', '✼']);
             snowflake.style.left = Math.random() * window.innerWidth + 'px';
             snowflake.style.top = '-20px';
             snowflake.style.animationDuration = (3 + Math.random() * 3) + 's';
             container.appendChild(snowflake);
-            // Soft tinkle sound
             playTone(1500 + Math.random() * 500, 0.05, 'sine');
             setTimeout(() => snowflake.remove(), 6000);
         }
@@ -1241,14 +1336,12 @@
         function createBalloon() {
             const balloon = document.createElement('div');
             balloon.className = 'balloon';
-            balloon.textContent = ['🎈', '🎈', '🎈', '🎈', '🎈'][Math.floor(Math.random() * 5)];
+            balloon.textContent = '🎈';
             balloon.style.left = Math.random() * window.innerWidth + 'px';
             balloon.style.bottom = '0px';
-            // Random balloon colors via filter
             const hue = Math.random() * 360;
             balloon.style.filter = `hue-rotate(${hue}deg)`;
             container.appendChild(balloon);
-            // Pop sound
             playTone(400 + Math.random() * 200, 0.1, 'sine');
             setTimeout(() => balloon.remove(), 5000);
         }
@@ -1276,15 +1369,64 @@
         function createCookie() {
             const cookie = document.createElement('div');
             cookie.className = 'cookie';
-            cookie.textContent = ['🍪', '🍪', '🥠', '🍩'][Math.floor(Math.random() * 4)];
+            cookie.textContent = randomItem(['🍪', '🥠', '🍩']);
             cookie.style.left = Math.random() * window.innerWidth + 'px';
             cookie.style.top = (window.innerHeight * 0.3 + Math.random() * window.innerHeight * 0.4) + 'px';
             container.appendChild(cookie);
-            // Crunchy cookie sound
             playTone(800, 0.08, 'square');
             setTimeout(() => playTone(1000, 0.06, 'square'), 50);
             setTimeout(() => playTone(600, 0.08, 'square'), 100);
             setTimeout(() => cookie.remove(), 3000);
+        }
+
+        function createFirework() {
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * (window.innerHeight * 0.6) + 50;
+            const firework = document.createElement('div');
+            firework.className = 'firework';
+            firework.textContent = randomItem(['🎆', '🎇', '✨', '💥']);
+            firework.style.left = x + 'px';
+            firework.style.top = y + 'px';
+            container.appendChild(firework);
+
+            const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#1dd1a1', '#ff9ff3', '#54a0ff'];
+            for (let i = 0; i < 8; i++) {
+                const spark = document.createElement('div');
+                spark.className = 'firework-spark';
+                spark.textContent = '✦';
+                spark.style.left = x + 'px';
+                spark.style.top = y + 'px';
+                spark.style.color = randomItem(colors);
+                const angle = (i / 8) * Math.PI * 2;
+                const distance = 80 + Math.random() * 40;
+                spark.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
+                spark.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
+                container.appendChild(spark);
+                setTimeout(() => spark.remove(), 1000);
+            }
+
+            playTone(300, 0.15, 'sawtooth');
+            setTimeout(() => playTone(800, 0.1, 'square'), 50);
+            setTimeout(() => playTone(1200, 0.08, 'sine'), 100);
+            setTimeout(() => firework.remove(), 1500);
+        }
+
+        function createDinosaur() {
+            const dino = document.createElement('div');
+            dino.className = 'dinosaur';
+            dino.textContent = randomItem(['🦖', '🦕', '🐊']);
+            const walkLeft = Math.random() > 0.5;
+            if (walkLeft) {
+                dino.classList.add('walk-left');
+                dino.style.left = (window.innerWidth - 50) + 'px';
+            } else {
+                dino.style.left = '0px';
+            }
+            dino.style.top = (window.innerHeight * 0.6 + Math.random() * window.innerHeight * 0.25) + 'px';
+            container.appendChild(dino);
+            playTone(80, 0.4, 'sawtooth');
+            setTimeout(() => playTone(100, 0.3, 'sawtooth'), 300);
+            setTimeout(() => dino.remove(), 4000);
         }
 
         // Effect handlers
@@ -1332,17 +1474,13 @@
             },
             bounce: {
                 start: () => {
-                    document.querySelectorAll('.toggle-card').forEach(card => {
-                        card.classList.add('bouncing');
-                    });
+                    toggleCards.forEach(card => card.classList.add('bouncing'));
                     effectIntervals.bounce = setInterval(() => {
                         playTone(300, 0.1, 'triangle');
                     }, 500);
                 },
                 stop: () => {
-                    document.querySelectorAll('.toggle-card').forEach(card => {
-                        card.classList.remove('bouncing');
-                    });
+                    toggleCards.forEach(card => card.classList.remove('bouncing'));
                     clearInterval(effectIntervals.bounce);
                 }
             },
@@ -1390,17 +1528,13 @@
             },
             spin: {
                 start: () => {
-                    document.querySelectorAll('.toggle-card').forEach(card => {
-                        card.classList.add('spinning');
-                    });
+                    toggleCards.forEach(card => card.classList.add('spinning'));
                     effectIntervals.spin = setInterval(() => {
                         playTone(500 + Math.random() * 300, 0.1, 'sine');
                     }, 500);
                 },
                 stop: () => {
-                    document.querySelectorAll('.toggle-card').forEach(card => {
-                        card.classList.remove('spinning');
-                    });
+                    toggleCards.forEach(card => card.classList.remove('spinning'));
                     clearInterval(effectIntervals.spin);
                 }
             },
@@ -1415,11 +1549,42 @@
                     effectIntervals.cookies = setInterval(createCookie, 300);
                 },
                 stop: () => clearInterval(effectIntervals.cookies)
+            },
+            fireworks: {
+                start: () => {
+                    effectIntervals.fireworks = setInterval(createFirework, 400);
+                },
+                stop: () => clearInterval(effectIntervals.fireworks)
+            },
+            dinosaurs: {
+                start: () => {
+                    effectIntervals.dinosaurs = setInterval(createDinosaur, 1200);
+                },
+                stop: () => clearInterval(effectIntervals.dinosaurs)
+            },
+            party: {
+                start: () => {
+                    playMelody();
+                    effectIntervals.partyConfetti = setInterval(createConfetti, 200);
+                    effectIntervals.partyBalloons = setInterval(createBalloon, 400);
+                    effectIntervals.partyMusic = setInterval(createMusicNote, 300);
+                    effectIntervals.partySparkle = setInterval(createSparkle, 200);
+                    document.body.classList.add('rainbow-bg');
+                },
+                stop: () => {
+                    clearInterval(effectIntervals.partyConfetti);
+                    clearInterval(effectIntervals.partyBalloons);
+                    clearInterval(effectIntervals.partyMusic);
+                    clearInterval(effectIntervals.partySparkle);
+                    document.body.classList.remove('rainbow-bg');
+                }
             }
         };
 
-        // Event listeners
-        document.querySelectorAll('input[type="checkbox"]').forEach(toggle => {
+        // Event listeners using cached DOM queries
+        const toggleCountDisplay = document.getElementById('toggleCount');
+
+        checkboxes.forEach(toggle => {
             toggle.addEventListener('change', function() {
                 const effect = this.dataset.effect;
                 playToggleSound(this.checked);
@@ -1431,10 +1596,9 @@
                     effects[effect].stop();
                 }
 
-                document.getElementById('toggleCount').textContent = toggleCount;
+                toggleCountDisplay.textContent = toggleCount;
             });
 
-            // Also make the whole card clickable
             const card = toggle.closest('.toggle-card');
             card.addEventListener('click', function(e) {
                 if (e.target !== toggle && !e.target.closest('.toggle-switch')) {
@@ -1446,7 +1610,7 @@
 
         // Reset button
         document.getElementById('resetBtn').addEventListener('click', function() {
-            document.querySelectorAll('input[type="checkbox"]').forEach(toggle => {
+            checkboxes.forEach(toggle => {
                 if (toggle.checked) {
                     toggle.checked = false;
                     const effect = toggle.dataset.effect;
@@ -1454,13 +1618,13 @@
                 }
             });
             toggleCount = 0;
-            document.getElementById('toggleCount').textContent = 0;
+            toggleCountDisplay.textContent = 0;
             playTone(400, 0.2);
             setTimeout(() => playTone(300, 0.2), 200);
         });
 
-        // Touch feedback
-        document.querySelectorAll('.toggle-card').forEach(card => {
+        // Touch feedback using cached toggle cards
+        toggleCards.forEach(card => {
             card.addEventListener('touchstart', function() {
                 this.style.transform = 'scale(0.98)';
             });
@@ -1616,11 +1780,11 @@
                 setTimeout(() => {
                     const confetti = document.createElement('div');
                     confetti.className = 'birthday-confetti';
-                    confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                    confetti.textContent = randomItem(emojis);
                     confetti.style.left = Math.random() * window.innerWidth + 'px';
                     confetti.style.top = '-50px';
                     confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
-                    document.body.appendChild(confetti);
+                    container.appendChild(confetti);
                     setTimeout(() => confetti.remove(), 4000);
                 }, i * 50);
             }
